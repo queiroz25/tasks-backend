@@ -37,17 +37,30 @@ pipeline{
         }
         stage('API Test'){
             steps{
-                dir('api-test')
-                git credentialsId: 'gitHub_login', url: 'https://github.com/queiroz25/tasks-api-test'
-                bat 'mvn test'
+                dir('api-test'){
+                    git credentialsId: 'gitHub_login', url: 'https://github.com/queiroz25/tasks-api-test'
+                    bat 'mvn test'
+                }
+             
             }
         }
         stage('Deploy FrontEnd'){
             steps{
-                dir('frontend')
-                git credentialsId: 'gitHub_login', url: 'https://github.com/queiroz25/tasks-frontend'
-                bat 'mvn clean package'
-                deploy adapters: [tomcat8(credentialsId: 'tomcatLogin', path: '', url: 'http://localhost:8001/')], contextPath: 'tasks', war: 'target/tasks.war'
+                dir('frontend'){
+                    git credentialsId: 'gitHub_login', url: 'https://github.com/queiroz25/tasks-frontend'
+                    bat 'mvn clean package'
+                    deploy adapters: [tomcat8(credentialsId: 'tomcatLogin', path: '', url: 'http://localhost:8001/')], contextPath: 'tasks', war: 'target/tasks.war'
+                }
+                
+            }
+        }
+        stage('Funcional Test'){
+            steps{
+                dir('funcional-test'){
+                    git credentialsId: 'gitHub_login', url: 'https://github.com/queiroz25/tasks-funcional-tests'
+                    bat 'mvn test'
+                }
+                
             }
         }
     }
